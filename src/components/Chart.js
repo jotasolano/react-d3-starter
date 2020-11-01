@@ -1,24 +1,20 @@
-import { inspect } from '@xstate/inspect';
-import { useMachine } from "@xstate/react";
 import React, { useState, useEffect, useRef } from "react";
-import MousePosMachine from '../State.js';
+import { connect } from 'react-redux'
+import { setHoverPos } from '../actions'
 import "../App.css";
 import * as d3 from 'd3';
 
-// inspect({
-//   url: "https://statecharts.io/inspect",
-//   iframe: false
-// });
+const configSelector = (state) => state.chartConfig
+
+const mapStateToProps = (state, ownProps) => ({
+  chart: configSelector(state)
+})
 
 const t = d3.transition().duration(1000);
 
-export default function RectHooks() {
+function RectHooks(props) {
   const [data, setData] = useState([5, 3, 6, 1, 2]);
   const svgRef = useRef();
-  const [state, send] = useMachine(MousePosMachine);
-  const COORDS = state.context;
-
-
 
     useEffect(() => {
       const svg = d3.select(svgRef.current); // select svg ref
@@ -41,10 +37,7 @@ export default function RectHooks() {
         let y = coords[1];
 
         //Dispatch to state here
-        send("MOUSE_OVER", { x:x, y:y });
-
-        console.log('the x value is:', state)
-
+        props.dispatch(setHoverPos(x, y));
       })
       .transition(t)
       .attr("width", value => value * 10)
@@ -96,7 +89,10 @@ export default function RectHooks() {
     <button onClick={update}>Update</button>
     <br />
     <button onClick={removeLast}>Remove</button>
+    <p>{`${props.chart.x}, ${props.chart.y}`}</p>
   </div>
   );
 };
 
+
+export default connect(mapStateToProps)(RectHooks)
