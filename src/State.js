@@ -9,25 +9,23 @@ import { inspect } from '@xstate/inspect';
 
 const MousePosMachine = Machine({
   id: "mousePosition",
-  initial: "inactive",
+  initial: "active",
   context: {
-    x: 0,
-    y: 0,
+    COORDS: { x:undefined, y:undefined },
   },
   states: {
-    inactive: {
-      on: { MOUSE_OUT: "active" }
-    },
     active: {
-    entry: assign({
-      x: ctx => ctx.x,
-      y: ctx => ctx.y
-    }),
-    on: { MOUSE_OVER: "active" }
-    },
+      on: {
+        MOUSE_OVER: {
+          actions: assign({
+            COORDS: (_, event) => {
+              return {x: event.x, y:event.y}
+            }
+          })
+        }
+      }
+    }
   }
 });
-
-// const service = interpret(MousePosMachine, { devTools: true });
 
 export default MousePosMachine;

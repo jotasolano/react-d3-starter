@@ -5,20 +5,20 @@ import MousePosMachine from '../State.js';
 import "../App.css";
 import * as d3 from 'd3';
 
-inspect({
-  url: "https://statecharts.io/inspect",
-  iframe: false
-});
+// inspect({
+//   url: "https://statecharts.io/inspect",
+//   iframe: false
+// });
 
 const t = d3.transition().duration(1000);
 
 export default function RectHooks() {
   const [data, setData] = useState([5, 3, 6, 1, 2]);
   const svgRef = useRef();
-  const [current, send] = useMachine(MousePosMachine);
-  const active = current.matches("active");
+  const [state, send] = useMachine(MousePosMachine);
+  const COORDS = state.context;
 
-  // console.log('current', current);
+
 
     useEffect(() => {
       const svg = d3.select(svgRef.current); // select svg ref
@@ -40,12 +40,11 @@ export default function RectHooks() {
         let x = coords[0];
         let y = coords[1];
 
-        send('MOUSE_OVER', {
-          x: x,
-          y: y,
-        })
+        //Dispatch to state here
+        send("MOUSE_OVER", { x:x, y:y });
 
-        console.log(current);
+        console.log('the x value is:', state)
+
       })
       .transition(t)
       .attr("width", value => value * 10)
