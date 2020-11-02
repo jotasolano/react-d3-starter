@@ -13,7 +13,7 @@ const mapStateToProps = (state, ownProps) => ({
 const t = d3.transition().duration(1000);
 
 function RectHooks(props) {
-  const [data, setData] = useState([5, 3, 6, 1, 2]);
+  const [data, setData] = useState(props.datum);
   const svgRef = useRef();
 
   useEffect(() => {
@@ -28,7 +28,7 @@ function RectHooks(props) {
         (exit) => exitDOM(exit, t),
       );
 
-    function enterDOM(enter, t) {
+    function enterDOM(enter) {
       enter
         .append('rect')
         .attr('class', 'new-element')
@@ -40,7 +40,8 @@ function RectHooks(props) {
           //Dispatch to state here
           props.dispatch(setHoverPos(x, y));
         })
-        .transition(t)
+        .transition()
+        .duration(1000)
         .attr('width', (value) => value * 10)
         .attr('height', 50)
         .attr('x', (value) => value + 10)
